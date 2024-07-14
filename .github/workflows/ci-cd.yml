@@ -52,6 +52,6 @@ jobs:
 
       - name: Deploy to EKS
         run: |
-          kubectl apply -f k8s/deployment.yml
-          kubectl apply -f k8s/service.yml
-          kubectl apply -f k8s/hpa.yml
+          kubectl apply -f K8s/deployment.yml
+          kubectl apply -f K8s/service.yml
+          kubectl apply -f K8s/hpa.yml
