@@ -17,7 +17,7 @@ export let options = {
 };
 
 export default function () {
-    const url = 'http://a2165d27a3b8a4a80aa847f5ef36b8e9-2114877474.us-west-1.elb.amazonaws.com/generate';
+    const url = 'http://<Replace-with-Load-Balancer-DNS-Name>/generate';
     const payload = JSON.stringify({ prompt: 'Why is the Earth round in shape?' });
     const params = {
         headers: { 'Content-Type': 'application/json' },
