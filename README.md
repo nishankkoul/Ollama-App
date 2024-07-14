@@ -303,6 +303,9 @@ Navigate to the directory containing your test script. Execute the following com
 k6 run load-test.js
 ```
 
+![image](https://github.com/user-attachments/assets/7662362d-1872-419c-a00a-1f0c664864ed)
+
+
 ### Results: 
 
 **1. Total Requests**: Simulated 82 HTTP requests across various scenarios.
