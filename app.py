@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return jsonify({'message': 'Welcome to the Llama API! Use /generate to post prompts.'}), 200
+    return jsonify({'message': 'Welcome to the Olama API! Use /generate to post prompts.'}), 200
 
 @app.route('/generate', methods=['POST'])
 def generate():

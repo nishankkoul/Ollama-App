@@ -7,7 +7,7 @@ ollama serve &
 # Wait for a few seconds to ensure the service is up
 sleep 5
 
-# Pull the Llama3 model
+# Pull the Moondream model
 echo "Pulling moondream model..."
 ollama pull moondream
 if [ $? -ne 0 ]; then
