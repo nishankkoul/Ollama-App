@@ -404,7 +404,7 @@ After executing the script, monitor the pods using the command **'kubectl top po
 
 ![image](https://github.com/user-attachments/assets/81358d21-785f-4305-89a8-6f7cbf1bf9e5)
 
-The above image clearly demonstrates that as soon as the load increased and surpassed the threshold limit of 100m, 6 more pods came up to handle the load and distribute it evenly.
+The above image demonstrates that as soon as the load increased and surpassed the threshold limit of 100m, 6 more pods came up to handle the load and distribute it evenly.
 
 ### Results:
 
@@ -419,9 +419,9 @@ The above image clearly demonstrates that as soon as the load increased and surp
 
 ## Task 6: GitHub Actions CI/CD Pipeline
 
-Creating a GitHub Actions CI/CD pipeline for this project involves automating the build, test, and deployment processes directly from the GitHub repository. By leveraging GitHub Actions, we will create workflows that automatically trigger on code changes, ensuring your application is always up-to-date and tested before deployment. 
+Creating a GitHub Actions CI/CD pipeline for this project involves automating the build, test, and deployment processes directly from the GitHub repository. By leveraging GitHub Actions, we will create workflows that automatically trigger code changes, ensuring your application is always up-to-date and tested before deployment. 
 
-The workflow is triggered by pushes and pull requests to the "Main" branch. The job runs on the latest Ubuntu environment and consists of several steps. First, it checks out the code from the repository. Next, it sets up Docker Buildx, logs into DockerHub using stored secrets, and builds and pushes a Docker image to DockerHub. It then installs kubectl for Kubernetes management and configures AWS CLI with the necessary credentials to interact with AWS services. The kubeconfig is updated to connect to the specified EKS cluster, and finally, the workflow deploys the application to the EKS cluster by applying the Kubernetes deployment, service, and HPA configuration files. This streamlined process ensures the application is continuously integrated and deployed, facilitating efficient and reliable updates.
+The workflow is triggered by pushes and pull requests to the "Main" branch. The job runs on the latest Ubuntu environment and consists of several steps. First, it checks out the code from the repository. Next, it sets up Docker Buildx, logs into DockerHub using stored secrets, and builds and pushes a Docker image to DockerHub. It then installs kubectl for Kubernetes management and configures AWS CLI with the necessary credentials to interact with AWS services. The kubeconfig is updated to connect to the specified EKS cluster. Finally, the workflow deploys the application to the EKS cluster by applying the Kubernetes deployment, service, and HPA configuration files. This streamlined process ensures the application is continuously integrated and deployed, facilitating efficient and reliable updates.
 
 Storing the secrets here:
 ```
@@ -439,9 +439,35 @@ Navigate to Settings -> Secrets -> New repository secret.
 
 ![image](https://github.com/user-attachments/assets/ea7e53dc-ede4-4270-abdd-0aadd71d3ec7)
 
-To test the GitHub Actions CI/CD Pipeline, execute a comment and commit it to the repository.
+To test the GitHub Actions CI/CD Pipeline, append a comment to any of the files and commit it to the repository. 
+
+![image](https://github.com/user-attachments/assets/2ed72c14-0843-4c58-ba38-466de82004ae)
+
+The pipeline is executed successfully and an updated Docker image is also uploaded to the Docker Hub account.
+
+![image](https://github.com/user-attachments/assets/8c48737c-5d8c-4881-a618-4807da283a02)
 
 
+## Task 7: Comparing performance across different LLMs within Ollama
+
+The file models-comparison.pdf extensively covers the performance of models across different LLM's within Ollama.
+
+
+## Best Practices Learned 
+
+**1. Regular Performance Testing:** Regular Performance Testing of the application with different infrastructure levels gives a clear understanding of the application performance and user experience. Reviewing and optimizing the infrastructure based on performance test results ensured robustness and readiness for anticipated operational conditions.
+
+**2. Containerization:** Using Docker to containerize applications ensures consistency across different environments and simplifies deployment.
+
+**3. Infrastructure as Code (IaC):** Automating the creation of cloud infrastructure using tools like 'eksctl' ensures the reproducibility and scalability of the deployment process.
+
+**4. Load Balancing:** Implementing a load balancer distributes traffic across multiple instances, enhancing the availability and reliability of the application.
+
+**5. Use GitHub Actions for CI/CD:** Automating the build, test, and deployment process using GitHub Actions helps maintain consistency and efficiency.
+
+**6. Securely Manage Secrets:** Use GitHub Secrets to store sensitive information such as DockerHub credentials and AWS keys.
+
+**7. Scalability:** Implement HPA to automatically scale your application based on CPU utilization, ensuring optimal performance and resource utilization.
 
 
 
