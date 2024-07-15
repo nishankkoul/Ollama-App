@@ -4,8 +4,6 @@ In this assignment, I undertook a comprehensive **DevOps/MLOps** project startin
 
 GitHub Repository for Ollama: https://github.com/ollama/ollama
 
-## Task 1
-
 Firstly, I read a few documentations along with various blogs on Ollama and deploying a Large Language Model (LLM) using Kubernetes. 
 The documents I referred are listed below:
 
@@ -27,7 +25,7 @@ https://kubernetes.io/docs/home/
 
 After reading various documentations and blogs, understanding the Ollama-API and locally executing the model on my system, I proceeded with the assignment execution.
 
-### Create Dockerfile and Flask API wrapper
+## Task 1: Create Dockerfile and Flask API wrapper
 
 I created a very simple API wrapper using Flask. Implemented the ollama.chat method for interacting with the moondream model. Next, I went on with the creation of Dockerfile using ollama as the base image (As specified in the assignment). This is how my Dockerfile looked.
 
@@ -312,21 +310,149 @@ k6 run load-test.js
 
 **2. Success Rate**: 44 requests returned a successful status code (200), achieving a success rate of approximately **53.66%**.
 
-**3. Response Times**: Detailed insights into average durations:
-- Connection establishment: Average of 50 ms.  
-- Blocking: Average of 30 ms.  
-- Data receiving: Average of 150 ms.  
-- Data sending: Average of 80 ms.
+**3. Variability in Response Time**: Average response time for successful requests ranged from 20000 ms to 50000 ms based on operation complexity.
 
-**4. Variability in Response Time**: Average response time for successful requests ranged from 200 ms to 500 ms based on operation complexity.
-
-**5. Additional Metrics**:
-
-**6. Load Testing**: Assessed system performance under varying virtual user loads, peaking at 20 virtual users.
+**5. Load Testing**: Assessed system performance under varying virtual user loads, peaking at 20 virtual users.
 
 ❌ Unfortunately, only 44 out of 82 requests returned a successful status code (200), resulting in a success rate of approximately 53.66%.
 
-✅ To increase the success rate of the requests, we'll be scaling up our infrastructure by upgrading the EC2 instance types from t2.medium to t2.xlarge. This change aims to improve performance and ensure smoother handling of the workload.
+✅ To increase the success rate of the requests, we'll be scaling up our infrastructure by upgrading the EC2 instance types from t2.medium to t2.xlarge. This change aims to improve performance and ensure smoother handling of the workload. 
+
+**NOTE**: AWS only allows a cumulative capacity of 16 CPUs to spin up for the entire EC2 service for a personal account. Since t2.xlarge instance type is allocated 4 virtual CPUs, hence, we can spin up a maximum of 4 nodes. So, change the instance type to t2.xlarge now.
+
+![image](https://github.com/user-attachments/assets/a12d1a14-4c64-4121-a56a-f9ae4b09f60a)
+
+Deploy the pods again as well as the service.
+```
+kubectl apply -f deployment.yml
+kubectl apply -f service.yml
+kubectl get all
+```
+
+Perform the load test again:
+```
+k6 run load-test.js
+```
+
+### Results:
+
+**1. Total Requests**: Simulated 120 HTTP requests across various scenarios.
+
+**2. Success Rate**: 91 requests returned a successful status code (200), achieving a success rate of approximately **75.83%**.
+
+**3. Variability in Response Times**: Average response time for successful requests ranged from 10000 ms to 40000 ms based on operation complexity.
+
+**4. Load Testing**: Assessed system performance under varying virtual user loads, peaking at 20 virtual users.
+
+**Inference**: Scaling the infrastructure from t2.medium to t2.xlarge significantly improved the system's ability to handle a higher volume of requests more efficiently. With the increased CPU and memory resources provided by the t2.xlarge instance, the server managed to process a larger number of concurrent requests successfully **(from 53.66% to 75.83%)**, reducing the likelihood of bottlenecks. This upgrade not only increased throughput but also resulted in a noticeable decrease in response times **(from 20,000ms-50,000ms to 10,000ms-40,000ms)**, ensuring faster and more reliable service for end-users. The enhanced capacity of the t2.xlarge instance allowed the application to maintain performance under load, demonstrating the critical role of appropriate infrastructure scaling in optimizing application responsiveness and user experience.
+
+
+## Task 4: Implement HPA for Deployment to Scale based upon CPU Utilization
+
+Implementing Horizontal Pod Autoscaler (HPA) for the deployment is a strategic approach to dynamically scale application pods based on CPU and memory usage, as well as custom metrics. By monitoring key performance indicators like CPU utilization, HPA ensures that the number of running pods adjusts automatically to meet the current demand. When CPU or memory usage exceeds predefined thresholds, HPA increases the number of pods to handle the load, thereby maintaining optimal performance and avoiding potential downtime. Conversely, during periods of low utilization, HPA scales down the number of pods to conserve resources and reduce costs. This automated scaling mechanism not only enhances the application's resilience and responsiveness but also optimizes resource utilization, ensuring efficient and cost-effective operations.
+
+Create hpa.yml specifying the Deployment name along with minimum and maximum replicas of pods.
+
+![image](https://github.com/user-attachments/assets/c282412b-2226-4839-a912-771a91c27901)
+
+The provided code defines a Horizontal Pod Autoscaler (HPA) for a Kubernetes deployment named ollama-app. This HPA automatically adjusts the number of pod replicas within the specified range of 4 to 10, based on the resource usage metrics. Specifically, it monitors CPU utilization, aiming to maintain an average CPU usage of 100 millicores (100m) per pod. When the CPU usage exceeds this target, the HPA increases the number of replicas to handle the load; conversely, it decreases the number of replicas when the CPU usage is below the target, ensuring efficient resource utilization and maintaining optimal performance of the ollama-app deployment.
+
+Before executing the YAML manifest, you need to install the Kubernetes Metrics Server , which provides the resource usage metrics necessary for monitoring the pods consumption:
+```
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+```
+
+Verify the installation:
+```
+kubectl get pods -n kube-system | grep metrics-server
+```
+
+You should see a metrics-server pod running.
+
+Now, apply the HorizontalPodAutoscaler YAML manifest using this command:
+```
+kubectl apply -f hpa.yml
+```
+
+Verify the HPA:
+```
+kubectl get hpa
+```
+
+This command will show you the current status of the HPA, including the current number of replicas and target metrics.
+
+Execute this command:
+```
+kubectl top pods
+```
+
+The command 'kubectl top pods' is used to display resource usage (CPU and memory) of the pods in a Kubernetes cluster. This command helps you monitor and understand the resource consumption of your pods, which is essential for performance tuning and resource management. It provides real-time metrics, allowing you to see how much CPU and memory each pod is using.
+
+![image](https://github.com/user-attachments/assets/0ac5b771-0df3-4191-a239-4a5b06009040)
+
+As we have not executed the load testing script yet, we can see the number of pods (4) as per the deployment along with their CPU consumption.
+
+
+## Task 5: Advanced Load Testing Monitoring System Auto Scaling
+
+Execute the load testing script.
+```
+k6 run load-test.js
+```
+
+After executing the script, monitor the pods using the command **'kubectl top pods'**.
+
+![image](https://github.com/user-attachments/assets/81358d21-785f-4305-89a8-6f7cbf1bf9e5)
+
+The above image clearly demonstrates that as soon as the load increased and surpassed the threshold limit of 100m, 6 more pods came up to handle the load and distribute it evenly.
+
+### Results:
+
+**1. Total Requests**: Simulated 131 HTTP requests across various scenarios.
+
+**2. Success Rate**: 112 requests returned a successful status code (200), achieving a success rate of approximately **85.49%**.
+
+**3. Variability in Response Times**: Average response time for successful requests ranged from 5000 ms to 20000 ms based on operation complexity.
+
+**4. Load Testing**: Assessed system performance under varying virtual user loads, peaking at 20 virtual users.
+
+
+## Task 6: GitHub Actions CI/CD Pipeline
+
+Creating a GitHub Actions CI/CD pipeline for this project involves automating the build, test, and deployment processes directly from the GitHub repository. By leveraging GitHub Actions, we will create workflows that automatically trigger on code changes, ensuring your application is always up-to-date and tested before deployment. 
+
+The workflow is triggered by pushes and pull requests to the "Main" branch. The job runs on the latest Ubuntu environment and consists of several steps. First, it checks out the code from the repository. Next, it sets up Docker Buildx, logs into DockerHub using stored secrets, and builds and pushes a Docker image to DockerHub. It then installs kubectl for Kubernetes management and configures AWS CLI with the necessary credentials to interact with AWS services. The kubeconfig is updated to connect to the specified EKS cluster, and finally, the workflow deploys the application to the EKS cluster by applying the Kubernetes deployment, service, and HPA configuration files. This streamlined process ensures the application is continuously integrated and deployed, facilitating efficient and reliable updates.
+
+Storing the secrets here:
+```
+Navigate to Settings -> Secrets -> New repository secret.
+
+# Add these secrets
+
+- AWS_ACCESS_KEY_ID
+- AWS_REGION
+- AWS_SECRET_ACCESS_KEY
+- DOCKER_PASSWORD
+- DOCKER_USERNAME
+- EKS_CLUSTER_NAME
+```
+
+![image](https://github.com/user-attachments/assets/ea7e53dc-ede4-4270-abdd-0aadd71d3ec7)
+
+To test the GitHub Actions CI/CD Pipeline, execute a comment and commit it to the repository.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
