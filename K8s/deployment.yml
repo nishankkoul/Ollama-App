@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: ollama-app
-        image: nishankkoul/ollama
+        image: nishankkoul/ollama:latest
         ports:
         - containerPort: 5000
 
