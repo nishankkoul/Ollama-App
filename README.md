@@ -27,7 +27,7 @@ After reading various documentations and blogs, understanding the Ollama-API and
 
 ## Task 1: Create Dockerfile and Flask API wrapper
 
-I created a very simple API wrapper using Flask. Implemented the ollama.chat method for interacting with the moondream model. Next, I went on with the creation of Dockerfile using ollama as the base image (As specified in the assignment). This is how my Dockerfile looked.
+I created a very simple API wrapper using Flask. Implemented the ollama.chat method for interacting with the moondream model. Next, I went on with the creation of Dockerfile using ollama as the base image. This is how my Dockerfile looked.
 
 ![image](https://github.com/user-attachments/assets/f0eaaf96-c7bd-4544-8007-3c93b3959050)
 
