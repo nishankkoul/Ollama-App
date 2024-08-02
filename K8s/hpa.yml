@@ -8,12 +8,12 @@ spec:
     kind: Deployment
     name: ollama-app
   minReplicas: 4
-  maxReplicas: 10
+  maxReplicas: 16
   metrics:
   - type: Resource
     resource:
       name: cpu
       target:
         type: Utilization
-        averageValue: 100m
+        averageValue: 400m
 
