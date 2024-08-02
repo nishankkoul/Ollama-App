@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: ollama-app
 spec:
-  replicas: 4
+  replicas: 8
   selector:
     matchLabels:
       app: ollama-app
