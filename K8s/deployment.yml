@@ -17,4 +17,11 @@ spec:
         image: nishankkoul/ollama:latest
         ports:
         - containerPort: 5000
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
 
