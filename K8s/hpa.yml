@@ -15,5 +15,5 @@ spec:
       name: cpu
       target:
         type: Utilization
-        averageValue: 70
+        averageValue: 30
 
